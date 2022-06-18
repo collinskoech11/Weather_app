@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import * as Location from "expo-location"
 import WeatherInfo from './components/WeatherInfo';
+import UnitsPicker from './components/UnitsPicker'
 
 const Weather_api_key = "0bff0698379b96eaf19daa753dfa7f0d"
 const base_weather_uri = `https://api.openweathermap.org/data/2.5/weather?`
@@ -55,6 +56,7 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="auto" />
         <View style={styles.mainview}>
+        <UnitsPicker unitsSystem={unitsSystem} setCurrentWeather={setUnitsSystem} />
          <WeatherInfo currentWeather={currentWeather}/>
         </View>
       </View>
