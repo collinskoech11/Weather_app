@@ -1,9 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import * as Location from "expo-location"
 import WeatherInfo from './components/WeatherInfo';
 import UnitsPicker from './components/UnitsPicker'
+import {colors} from './utils/index'
+import ReloadIcon from './components/ReloadIcon';
+import WeatherDetails from './components/WeatherDetails';
+
 
 const Weather_api_key = "0bff0698379b96eaf19daa753dfa7f0d"
 const base_weather_uri = `https://api.openweathermap.org/data/2.5/weather?`
@@ -18,10 +22,12 @@ export default function App() {
 
   useEffect(() => {
     load()
-  }, [])
+  }, [unitsSystem])
   async function load(){
+    setCurrentWeather(null)
+    setErrorMessage(null)
     try{
-      let { status } = await Location.requestPermissionsAsync()
+      let { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== "granted"){
         setErrorMessage("Access to location is needed ")
         return
@@ -56,15 +62,24 @@ export default function App() {
       <View style={styles.container}>
         <StatusBar style="auto" />
         <View style={styles.mainview}>
-        <UnitsPicker unitsSystem={unitsSystem} setCurrentWeather={setUnitsSystem} />
-         <WeatherInfo currentWeather={currentWeather}/>
+          <UnitsPicker unitsSystem={unitsSystem} setUnitsSystem={setUnitsSystem} />
+          <ReloadIcon load={load} />
+          <WeatherInfo currentWeather={currentWeather}/>
         </View>
+        <WeatherDetails currentWeather={currentWeather}/>
+      </View>
+    );
+  } else if(errorMessage) {
+    return (
+      <View style={styles.container}>
+        <Text>{errorMessage}</Text>
+        <StatusBar style="auto" />
       </View>
     );
   } else {
     return (
-      <View style={styles.container}>() 
-        <Text>{errorMessage}</Text>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.PRIMARY_COLOR} />
         <StatusBar style="auto" />
       </View>
     );
